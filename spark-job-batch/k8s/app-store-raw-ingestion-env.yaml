@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-store-raw-ingestion-env
+  namespace: spark-jobs
+data:
+  APPSTORE_JDBC_URL: "jdbc:postgresql://app-store-postgres.app-store.svc.cluster.local:5432/appstore"
+  APPSTORE_JDBC_USER: "appstore"
+  APPSTORE_JDBC_PASSWORD: "appstore"
+  ICEBERG_CATALOG: "lakehouse"
+  ICEBERG_RAW_DATABASE: "raw_app_store"
+  INGESTION_MODE: "delta_append"
+  JDBC_PARTITIONS: "8"
+  APPSTORE_USERS_UPPER_BOUND: "100000"
+  APPSTORE_APPS_UPPER_BOUND: "5000"
+  APPSTORE_SUBSCRIPTIONS_UPPER_BOUND: "100000"

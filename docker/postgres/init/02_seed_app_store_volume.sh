@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+USERS="${APP_STORE_USERS:-100000}"
+APPS="${APP_STORE_APPS:-5000}"
+DOWNLOADS="${APP_STORE_DOWNLOADS:-1000000}"
+REVIEWS="${APP_STORE_REVIEWS:-250000}"
+PURCHASES="${APP_STORE_PURCHASES:-300000}"
+SUBSCRIPTIONS="${APP_STORE_SUBSCRIPTIONS:-100000}"
+
+echo "Seeding App Store operational database"
+echo "USERS=${USERS} APPS=${APPS} DOWNLOADS=${DOWNLOADS} REVIEWS=${REVIEWS} PURCHASES=${PURCHASES} SUBSCRIPTIONS=${SUBSCRIPTIONS}"
+
+psql -v ON_ERROR_STOP=1 \
+  -v users="${USERS}" \
+  -v apps="${APPS}" \
+  -v downloads="${DOWNLOADS}" \
+  -v reviews="${REVIEWS}" \
+  -v purchases="${PURCHASES}" \
+  -v subscriptions="${SUBSCRIPTIONS}" \
+  --username "${POSTGRES_USER}" \
+  --dbname "${POSTGRES_DB}" <<'SQL'
+SET synchronous_commit = off;
+
+INSERT INTO app_categories (category_id, category_name)
+VALUES
+    (1, 'Games'),
+    (2, 'Productivity'),
+    (3, 'Finance'),
+    (4, 'Health'),
+    (5, 'Education'),
+    (6, 'Social'),
+    (7, 'Shopping'),
+    (8, 'Travel'),
+    (9, 'Music'),
+    (10, 'News');
+
+INSERT INTO users (user_id, country_code, device_type, created_at, marketing_channel)
+SELECT
+    id,
+    (ARRAY['US','PT','BR','GB','DE','FR','ES','IT','NL','CA'])[1 + (random() * 9)::int],
+    (ARRAY['ios','android','tablet'])[1 + (random() * 2)::int],
+    now() - (random() * interval '730 days'),
+    (ARRAY['organic','paid_search','social','referral','email'])[1 + (random() * 4)::int]
+FROM generate_series(1, :users) AS id;
+
+INSERT INTO apps (app_id, category_id, developer_name, app_name, price, created_at, is_active)
+SELECT
+    id,
+    1 + (random() * 9)::int,
+    'Developer ' || (1 + (random() * 500)::int),
+    'App Store Demo App ' || id,
+    CASE WHEN random() < 0.70 THEN 0 ELSE round((random() * 49.99)::numeric, 2) END,
+    now() - (random() * interval '1095 days'),
+    random() > 0.05
+FROM generate_series(1, :apps) AS id;
+
+INSERT INTO app_downloads (download_id, user_id, app_id, downloaded_at, country_code, device_type, app_version)
+SELECT
+    id,
+    1 + (random() * (:users - 1))::bigint,
+    1 + (random() * (:apps - 1))::bigint,
+    now() - (random() * interval '365 days'),
+    (ARRAY['US','PT','BR','GB','DE','FR','ES','IT','NL','CA'])[1 + (random() * 9)::int],
+    (ARRAY['ios','android','tablet'])[1 + (random() * 2)::int],
+    (1 + (random() * 4)::int) || '.' || (random() * 10)::int || '.' || (random() * 20)::int
+FROM generate_series(1, :downloads) AS id;
+
+INSERT INTO app_reviews (review_id, user_id, app_id, rating, review_text, reviewed_at)
+SELECT
+    id,
+    1 + (random() * (:users - 1))::bigint,
+    1 + (random() * (:apps - 1))::bigint,
+    1 + (random() * 4)::int,
+    CASE WHEN random() < 0.20 THEN NULL ELSE 'Synthetic review ' || id END,
+    now() - (random() * interval '365 days')
+FROM generate_series(1, :reviews) AS id;
+
+INSERT INTO app_purchases (purchase_id, user_id, app_id, purchased_at, amount, currency, payment_status)
+SELECT
+    id,
+    1 + (random() * (:users - 1))::bigint,
+    1 + (random() * (:apps - 1))::bigint,
+    now() - (random() * interval '365 days'),
+    round((0.99 + random() * 199.00)::numeric, 2),
+    (ARRAY['USD','EUR','GBP','BRL','CAD'])[1 + (random() * 4)::int],
+    (ARRAY['completed','failed','refunded','cancelled'])[1 + (random() * 3)::int]
+FROM generate_series(1, :purchases) AS id;
+
+INSERT INTO subscriptions (subscription_id, user_id, app_id, started_at, ended_at, plan_type, status)
+SELECT
+    id,
+    1 + (random() * (:users - 1))::bigint,
+    1 + (random() * (:apps - 1))::bigint,
+    now() - (random() * interval '365 days'),
+    CASE WHEN random() < 0.75 THEN NULL ELSE now() - (random() * interval '180 days') END,
+    (ARRAY['monthly','annual','trial'])[1 + (random() * 2)::int],
+    (ARRAY['active','cancelled','expired'])[1 + (random() * 2)::int]
+FROM generate_series(1, :subscriptions) AS id;
+
+ANALYZE;
+SQL

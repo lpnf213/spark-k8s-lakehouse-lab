@@ -1,0 +1,104 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Runtime View: Spark on Kubernetes Lakehouse Flow</title>
+  <desc id="desc">Runtime diagram showing Spark submit creating driver and executor pods on Kubernetes, reading PostgreSQL through JDBC, writing Iceberg data to MinIO, registering metadata in Hive Metastore, and Trino querying the lakehouse.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="760" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#020617"/>
+      <stop offset="0.48" stop-color="#0F172A"/>
+      <stop offset="1" stop-color="#1E1B4B"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#93C5FD"/>
+    </marker>
+    <style>
+      .title { font: 800 40px Inter, Segoe UI, Arial, sans-serif; fill: #F8FAFC; }
+      .subtitle { font: 500 18px Inter, Segoe UI, Arial, sans-serif; fill: #CBD5E1; }
+      .section { font: 800 15px Inter, Segoe UI, Arial, sans-serif; fill: #BAE6FD; letter-spacing: .1em; }
+      .box-title { font: 800 23px Inter, Segoe UI, Arial, sans-serif; fill: #F8FAFC; }
+      .box-text { font: 500 15px Inter, Segoe UI, Arial, sans-serif; fill: #DDEAFE; }
+      .small { font: 700 13px Inter, Segoe UI, Arial, sans-serif; fill: #0F172A; }
+      .arrow { stroke: #93C5FD; stroke-width: 4.5; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrowhead); }
+      .soft-arrow { stroke: #C4B5FD; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrowhead); stroke-dasharray: 8 8; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="760" rx="34" fill="url(#bg)"/>
+  <circle cx="1050" cy="120" r="180" fill="#38BDF8" opacity="0.11"/>
+  <circle cx="130" cy="660" r="220" fill="#A78BFA" opacity="0.12"/>
+
+  <text x="58" y="68" class="title">Runtime View</text>
+  <text x="60" y="103" class="subtitle">What happens when the Spark batch ingestion job runs inside Kubernetes.</text>
+
+  <text x="70" y="158" class="section">SUBMISSION</text>
+  <text x="385" y="158" class="section">KUBERNETES SPARK APP</text>
+  <text x="800" y="158" class="section">LAKEHOUSE SERVICES</text>
+
+  <g filter="url(#shadow)">
+    <rect x="55" y="190" width="245" height="135" rx="22" fill="#1E293B" stroke="#60A5FA" stroke-width="2"/>
+    <text x="85" y="238" class="box-title">Spark Submit Job</text>
+    <text x="85" y="270" class="box-text">Kubernetes Job runs</text>
+    <text x="85" y="294" class="box-text">/opt/spark/bin/spark-submit</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="375" y="190" width="260" height="135" rx="22" fill="#1E293B" stroke="#FB923C" stroke-width="2"/>
+    <text x="405" y="238" class="box-title">Spark Driver Pod</text>
+    <text x="405" y="270" class="box-text">Creates Spark session</text>
+    <text x="405" y="294" class="box-text">coordinates reads and writes</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="375" y="405" width="260" height="145" rx="22" fill="#1E293B" stroke="#FBBF24" stroke-width="2"/>
+    <text x="405" y="455" class="box-title">Executor Pods</text>
+    <text x="405" y="487" class="box-text">Dynamic allocation</text>
+    <text x="405" y="511" class="box-text">parallel JDBC partitions</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="785" y="190" width="245" height="125" rx="22" fill="#1E293B" stroke="#38BDF8" stroke-width="2"/>
+    <text x="815" y="238" class="box-title">PostgreSQL</text>
+    <text x="815" y="270" class="box-text">App Store source DB</text>
+    <rect x="815" y="285" width="122" height="26" rx="13" fill="#BAE6FD"/>
+    <text x="835" y="303" class="small">JDBC reads</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="785" y="355" width="245" height="125" rx="22" fill="#1E293B" stroke="#34D399" stroke-width="2"/>
+    <text x="815" y="403" class="box-title">MinIO</text>
+    <text x="815" y="435" class="box-text">S3 warehouse bucket</text>
+    <rect x="815" y="450" width="140" height="26" rx="13" fill="#BBF7D0"/>
+    <text x="834" y="468" class="small">Parquet files</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="785" y="520" width="245" height="125" rx="22" fill="#1E293B" stroke="#A78BFA" stroke-width="2"/>
+    <text x="815" y="568" class="box-title">Hive Metastore</text>
+    <text x="815" y="600" class="box-text">Iceberg catalog metadata</text>
+    <rect x="815" y="615" width="150" height="26" rx="13" fill="#DDD6FE"/>
+    <text x="837" y="633" class="small">table catalog</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="445" y="630" width="245" height="100" rx="22" fill="#1E293B" stroke="#F472B6" stroke-width="2"/>
+    <text x="475" y="674" class="box-title">Trino / DBeaver</text>
+    <text x="475" y="704" class="box-text">SQL queries over Iceberg</text>
+  </g>
+
+  <path class="arrow" d="M305 258 C330 258, 345 258, 370 258"/>
+  <path class="arrow" d="M505 330 C505 355, 505 375, 505 400"/>
+  <path class="arrow" d="M640 255 C700 230, 735 235, 780 250"/>
+  <path class="arrow" d="M640 470 C700 470, 730 425, 780 418"/>
+  <path class="arrow" d="M640 505 C710 540, 735 575, 780 585"/>
+  <path class="soft-arrow" d="M790 625 C710 675, 670 690, 695 690"/>
+  <path class="soft-arrow" d="M1035 582 C1090 515, 1090 430, 1035 418"/>
+
+  <text x="322" y="242" class="box-text">creates</text>
+  <text x="520" y="372" class="box-text">launches</text>
+  <text x="655" y="223" class="box-text">reads source</text>
+  <text x="660" y="445" class="box-text">writes data</text>
+  <text x="655" y="560" class="box-text">commits metadata</text>
+  <text x="710" y="710" class="box-text">queries</text>
+</svg>

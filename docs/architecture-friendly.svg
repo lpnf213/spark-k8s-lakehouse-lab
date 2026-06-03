@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="920" viewBox="0 0 1400 920" role="img" aria-labelledby="title desc">
+  <title id="title">Spark Operations Lakehouse Architecture</title>
+  <desc id="desc">Friendly architecture diagram showing PostgreSQL, Spark on Kubernetes, MinIO, Hive Metastore, Iceberg, Trino, DBeaver and Docker Desktop.</desc>
+
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#0f172a" flood-opacity="0.16"/>
+    </filter>
+
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/>
+    </marker>
+
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a"/>
+    </marker>
+
+    <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7c3aed"/>
+    </marker>
+
+    <style>
+      .bg { fill: #f8fafc; }
+      .title { font: 800 42px "Segoe UI", Arial, sans-serif; fill: #0f172a; }
+      .subtitle { font: 500 18px "Segoe UI", Arial, sans-serif; fill: #475569; }
+      .zone-title { font: 800 22px "Segoe UI", Arial, sans-serif; fill: #0f172a; }
+      .zone-subtitle { font: 500 14px "Segoe UI", Arial, sans-serif; fill: #64748b; }
+      .card-title { font: 800 20px "Segoe UI", Arial, sans-serif; fill: #0f172a; }
+      .card-text { font: 500 14px "Segoe UI", Arial, sans-serif; fill: #475569; }
+      .small { font: 700 12px "Segoe UI", Arial, sans-serif; fill: #64748b; letter-spacing: .4px; }
+      .badge-text { font: 900 17px "Segoe UI", Arial, sans-serif; fill: #ffffff; }
+      .pill-text { font: 800 13px "Segoe UI", Arial, sans-serif; fill: #ffffff; }
+      .arrow-label { font: 800 14px "Segoe UI", Arial, sans-serif; fill: #1e293b; }
+      .arrow-sub { font: 500 12px "Segoe UI", Arial, sans-serif; fill: #64748b; }
+      .zone { fill: #ffffff; stroke: #dbeafe; stroke-width: 2; filter: url(#shadow); }
+      .card { fill: #ffffff; stroke: #e2e8f0; stroke-width: 1.5; filter: url(#shadow); }
+      .blue-line { fill: none; stroke: #2563eb; stroke-width: 4; marker-end: url(#arrow-blue); }
+      .green-line { fill: none; stroke: #16a34a; stroke-width: 4; marker-end: url(#arrow-green); }
+      .purple-line { fill: none; stroke: #7c3aed; stroke-width: 4; marker-end: url(#arrow-purple); }
+      .soft-line { fill: none; stroke: #94a3b8; stroke-width: 3; stroke-dasharray: 8 8; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1400" height="920"/>
+
+  <text x="70" y="70" class="title">Spark Operations Architecture</text>
+  <text x="72" y="105" class="subtitle">Operational PostgreSQL → Spark on Kubernetes → Iceberg Lakehouse on MinIO → Trino / DBeaver analytics</text>
+
+  <rect x="70" y="145" width="360" height="650" rx="28" class="zone"/>
+  <text x="105" y="190" class="zone-title">Docker Desktop</text>
+  <text x="105" y="214" class="zone-subtitle">Local source + lakehouse services</text>
+
+  <rect x="520" y="145" width="360" height="650" rx="28" class="zone"/>
+  <text x="555" y="190" class="zone-title">Kubernetes Cluster</text>
+  <text x="555" y="214" class="zone-subtitle">Vagrant + kubeadm Spark runtime</text>
+
+  <rect x="970" y="145" width="360" height="650" rx="28" class="zone"/>
+  <text x="1005" y="190" class="zone-title">Query & Demo Layer</text>
+  <text x="1005" y="214" class="zone-subtitle">SQL access for validation</text>
+
+  <!-- Docker Desktop cards -->
+  <rect x="105" y="255" width="290" height="125" rx="22" class="card"/>
+  <circle cx="150" cy="317" r="31" fill="#336791"/>
+  <text x="138" y="323" class="badge-text">PG</text>
+  <text x="195" y="300" class="card-title">PostgreSQL</text>
+  <text x="195" y="326" class="card-text">App Store source DB</text>
+  <text x="195" y="349" class="card-text">users, apps, subscriptions</text>
+
+  <rect x="105" y="420" width="290" height="125" rx="22" class="card"/>
+  <circle cx="150" cy="482" r="31" fill="#c72e49"/>
+  <text x="134" y="488" class="badge-text">S3</text>
+  <text x="195" y="465" class="card-title">MinIO</text>
+  <text x="195" y="491" class="card-text">Iceberg warehouse bucket</text>
+  <text x="195" y="514" class="card-text">metadata + Parquet files</text>
+
+  <rect x="105" y="585" width="290" height="125" rx="22" class="card"/>
+  <circle cx="150" cy="647" r="31" fill="#f59e0b"/>
+  <text x="134" y="653" class="badge-text">HM</text>
+  <text x="195" y="630" class="card-title">Hive Metastore</text>
+  <text x="195" y="656" class="card-text">Iceberg catalog metadata</text>
+  <text x="195" y="679" class="card-text">backed by PostgreSQL</text>
+
+  <!-- Kubernetes cards -->
+  <rect x="555" y="255" width="290" height="105" rx="22" class="card"/>
+  <circle cx="600" cy="307" r="31" fill="#326ce5"/>
+  <text x="584" y="313" class="badge-text">K8s</text>
+  <text x="645" y="292" class="card-title">Spark Submit</text>
+  <text x="645" y="318" class="card-text">Kubernetes Job manifest</text>
+
+  <rect x="555" y="410" width="290" height="125" rx="22" class="card"/>
+  <circle cx="600" cy="472" r="31" fill="#e25a1c"/>
+  <text x="587" y="478" class="badge-text">SP</text>
+  <text x="645" y="455" class="card-title">Spark Driver</text>
+  <text x="645" y="481" class="card-text">AppStoreRawIngestionJob</text>
+  <text x="645" y="504" class="card-text">JDBC + Iceberg logic</text>
+
+  <rect x="555" y="585" width="290" height="125" rx="22" class="card"/>
+  <circle cx="600" cy="647" r="31" fill="#f97316"/>
+  <text x="586" y="653" class="badge-text">EX</text>
+  <text x="645" y="630" class="card-title">Executors</text>
+  <text x="645" y="656" class="card-text">Dynamic allocation</text>
+  <text x="645" y="679" class="card-text">parallel reads and writes</text>
+
+  <!-- Query layer cards -->
+  <rect x="1005" y="255" width="290" height="125" rx="22" class="card"/>
+  <circle cx="1050" cy="317" r="31" fill="#1f77b4"/>
+  <text x="1039" y="323" class="badge-text">TR</text>
+  <text x="1095" y="300" class="card-title">Trino</text>
+  <text x="1095" y="326" class="card-text">SQL engine over Iceberg</text>
+  <text x="1095" y="349" class="card-text">catalog: iceberg</text>
+
+  <rect x="1005" y="420" width="290" height="125" rx="22" class="card"/>
+  <circle cx="1050" cy="482" r="31" fill="#1d4ed8"/>
+  <text x="1038" y="488" class="badge-text">DB</text>
+  <text x="1095" y="465" class="card-title">DBeaver</text>
+  <text x="1095" y="491" class="card-text">Friendly SQL interface</text>
+  <text x="1095" y="514" class="card-text">jdbc:trino://localhost</text>
+
+  <rect x="1005" y="585" width="290" height="125" rx="22" class="card"/>
+  <circle cx="1050" cy="647" r="31" fill="#0f172a"/>
+  <text x="1038" y="653" class="badge-text">UI</text>
+  <text x="1095" y="630" class="card-title">MinIO Console</text>
+  <text x="1095" y="656" class="card-text">Inspect warehouse files</text>
+  <text x="1095" y="679" class="card-text">bucket: warehouse</text>
+
+  <!-- Flow arrows -->
+  <path d="M 395 317 C 470 317, 485 470, 555 470" class="blue-line"/>
+  <text x="430" y="360" class="arrow-label">JDBC reads</text>
+  <text x="430" y="380" class="arrow-sub">partitioned source extraction</text>
+
+  <path d="M 700 360 L 700 410" class="purple-line"/>
+  <text x="718" y="392" class="arrow-sub">creates driver</text>
+
+  <path d="M 700 535 L 700 585" class="purple-line"/>
+  <text x="718" y="567" class="arrow-sub">dynamic executors</text>
+
+  <path d="M 555 647 C 475 647, 470 507, 395 482" class="green-line"/>
+  <text x="430" y="610" class="arrow-label">Iceberg writes</text>
+  <text x="430" y="630" class="arrow-sub">MERGE INTO + Parquet</text>
+
+  <path d="M 555 472 C 480 472, 475 647, 395 647" class="green-line"/>
+  <text x="430" y="520" class="arrow-label">Catalog updates</text>
+  <text x="430" y="540" class="arrow-sub">Hive Metastore metadata</text>
+
+  <path d="M 395 482 C 650 330, 835 290, 1005 317" class="blue-line"/>
+  <text x="660" y="305" class="arrow-label">Read table data</text>
+  <text x="660" y="325" class="arrow-sub">Iceberg files from MinIO</text>
+
+  <path d="M 395 647 C 650 700, 835 380, 1005 317" class="purple-line"/>
+  <text x="680" y="705" class="arrow-label">Read catalog</text>
+  <text x="680" y="725" class="arrow-sub">Hive Metastore table metadata</text>
+
+  <path d="M 1095 420 L 1095 380" class="blue-line"/>
+  <text x="1112" y="407" class="arrow-sub">SQL via JDBC</text>
+
+  <path d="M 1095 585 L 1095 545" class="soft-line"/>
+
+  <!-- Bottom result strip -->
+  <rect x="190" y="835" width="1020" height="52" rx="26" fill="#0f172a"/>
+  <text x="228" y="868" class="pill-text">Result: raw_app_store.users, raw_app_store.apps, raw_app_store.subscriptions stored as partitioned Iceberg tables in MinIO</text>
+</svg>

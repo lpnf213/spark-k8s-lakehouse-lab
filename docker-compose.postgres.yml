@@ -1,0 +1,37 @@
+services:
+  app-store-postgres:
+    build:
+      context: ./docker/postgres
+    container_name: app-store-postgres
+    environment:
+      POSTGRES_DB: appstore
+      POSTGRES_USER: appstore
+      POSTGRES_PASSWORD: appstore
+      APP_STORE_USERS: 100000
+      APP_STORE_APPS: 5000
+      APP_STORE_DOWNLOADS: 1000000
+      APP_STORE_REVIEWS: 250000
+      APP_STORE_PURCHASES: 300000
+      APP_STORE_SUBSCRIPTIONS: 100000
+    ports:
+      - "5432:5432"
+    networks:
+      app-store-net:
+        ipv4_address: 172.29.10.10
+    volumes:
+      - app-store-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U appstore -d appstore"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  app-store-postgres-data:
+
+networks:
+  app-store-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.29.10.0/24
