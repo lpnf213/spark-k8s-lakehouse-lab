@@ -4,6 +4,12 @@ This Spark job reads PostgreSQL operational tables and writes raw Apache Iceberg
 
 The purpose of this subproject is to study what each Spark-on-Kubernetes step does. There are no PowerShell helper scripts on purpose: every command is explicit so you can see the moving parts.
 
+The full command runbook lives in the main repository README:
+
+```text
+../README.md
+```
+
 ## What It Reads
 
 - `users`
